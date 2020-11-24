@@ -195,9 +195,6 @@ p <- p %>%
         layout(scene = list(annotations = a,
                             aspectratio = list(x=0.9, y=1, z=1))) %>%
         config(displayModeBar = FALSE)
-# %>%
-#         partial_bundle() # for smaller filesize and faster load time
-
 
 
 # ### OPTION 1 --- render as interactive plotly object
