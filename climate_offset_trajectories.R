@@ -132,9 +132,8 @@ zlb <- '<b>Dirty/warm</b> \u2190 Airscores \u2192 <b>Clean/cool</b>'
                           showlegend=T, name=tracename,
                           type ='scatter3d', mode = 'lines',
                           line = list(color=tracecol, width=4)) %>%
-                layout(
-                        scene = list(
-                                aspectratio=list(x=0.9, y=1, z=0.8),
+                layout(scene = list(
+                                # aspectratio=list(x=0.9, y=1, z=0.8),
                                 camera = list(
                                         center = list(x=0.1, y=0.1, z=-0.35),
                                         eye = list(x=-1.75, y=-0.5, z=0)),
@@ -193,8 +192,12 @@ a <- list(list(x=tr$vx[1], y=tr$vy[1], z=tr$vz[1],
                xanchor='left', yanchor='bottom'))
 p <- p %>%
         layout(scene = list(annotations = a,
-                            aspectratio = list(x=0.9, y=1, z=1))) %>%
-        config(displayModeBar = FALSE)
+                            aspectratio = list(x=0.9, y=1, z=1)
+                            )
+               ) %>%
+        config(displayModeBar = FALSE) %>%
+        toWebGL() %>%     # for faster rendering in browser
+        partial_bundle()  # for smaller filesize and faster load time
 
 
 # ### OPTION 1 --- render as interactive plotly object
@@ -202,9 +205,11 @@ p <- p %>%
 
 
 # ### OPTION 2 --- save it locally as HTML
-pp <- p %>% partial_bundle() # for smaller filesize and faster load time
-htmlwidgets::saveWidget(as_widget(pp), file = './index.html',
+htmlwidgets::saveWidget(as_widget(p), file = './index.html',
                         title='Mitigation trajectories')
+# p$dependencies[[5]]
+
+
 
 # ### OPTION 3 --- host as shiny app
 # txt_desc <- paste0(
