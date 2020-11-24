@@ -4,8 +4,10 @@ Trajectories for climate and air-quality mitigation. Trajectories describe expec
 
 
 #### Website
-https://www.rsmithlab.org/trajectories/
+
+<a href="https://www.rsmithlab.org/trajectories/" target="_blank">https://www.rsmithlab.org/trajectories/</a>
 
 
 #### Further info
-robert.smith3@usda.gov
+
+<a href="robert.smith3@usda.gov" target="_blank">robert.smith3@usda.gov</a>
