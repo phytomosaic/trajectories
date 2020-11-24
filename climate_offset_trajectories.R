@@ -204,13 +204,10 @@ p <- p %>%
 # p
 
 
-
-
 # ### OPTION 2 --- save it locally as HTML
-# getwd()
-htmlwidgets::saveWidget(as_widget(p), file = './index.html')
-
-
+pp <- p %>% partial_bundle() # for smaller filesize and faster load time
+htmlwidgets::saveWidget(as_widget(pp), file = './index.html',
+                        title='Mitigation trajectories')
 
 # ### OPTION 3 --- host as shiny app
 # txt_desc <- paste0(
