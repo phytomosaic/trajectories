@@ -29,6 +29,9 @@ d <- read.csv('./n_west_contour.csv', header=T)
 names(d) <- c('Step','x','y','z')
 d$z[d$z < 0] <- NA
 d <- d[d$x < 7.1,]       # remove a slew of NA at high N dep
+
+# rounding (may reduce filesize, from 2.6 MB to 1.2 MB)
+d[,2:4] <- sapply(d[,2:4], round, digits=2)
 `reshape_w` <- function (data, ...) {
         if (!is.data.frame(data))
                 stop('must be dataframe')
@@ -114,18 +117,13 @@ zlb <- '<b>Dirty/warm</b> \u2190 Airscores \u2192 <b>Clean/cool</b>'
         plot_ly(z=t(z), x=x, y=y, hoverinfo = 'none') %>%
                 # add regression surface
                 add_surface(showscale=showscale,
-                            colorbar = list(
-                                    title = 'Airscores'
-                                    # tickvals = seq(2,10,by=2),
-                                    # ticktext = list('2, Clean/cool','4','6','8',
-                                    #                 '10, Dirty/warm')
-                            )
-                ) %>%
+                            colorbar = list(title = 'Airscores')) %>%
                 # add contours to regression surface
                 add_surface(
                         contours = list(
                                 z = list(show = TRUE, highlight = FALSE,
-                                         project=list(z=TRUE), start=0, end=99, size=0.5)),
+                                         project=list(z=TRUE), start=0, end=99,
+                                         size=0.5)),
                         showscale=FALSE) %>%
                 # add trace of trajectories to surface
                 add_trace(x = vx, y = vy, z = vz+0.05,
@@ -133,13 +131,13 @@ zlb <- '<b>Dirty/warm</b> \u2190 Airscores \u2192 <b>Clean/cool</b>'
                           type ='scatter3d', mode = 'lines',
                           line = list(color=tracecol, width=4)) %>%
                 layout(scene = list(
-                                # aspectratio=list(x=0.9, y=1, z=0.8),
-                                camera = list(
-                                        center = list(x=0.1, y=0.1, z=-0.35),
-                                        eye = list(x=-1.75, y=-0.5, z=0)),
-                                xaxis = list(title = xlb, type='linear'),
-                                yaxis = list(title = ylb, type='linear'),
-                                zaxis = list(title = zlb, type='linear')))
+                        # aspectratio=list(x=0.9, y=1, z=0.8),
+                        camera = list(
+                                center = list(x=0.1, y=0.1, z=-0.35),
+                                eye = list(x=-1.75, y=-0.5, z=0)),
+                        xaxis = list(title = xlb, type='linear'),
+                        yaxis = list(title = ylb, type='linear'),
+                        zaxis = list(title = zlb, type='linear')))
 }
 # ### TEST render
 # n <- 7
@@ -168,19 +166,28 @@ zlb <- '<b>Dirty/warm</b> \u2190 Airscores \u2192 <b>Clean/cool</b>'
 n <- 7
 tr <- make_trace(seq(2, 3, len=n), seq(22,30,len=n))
 p0 <- plty_trace(tr$vx, tr$vy, tr$vz, showscale=FALSE,
-                 tracecol='red', 'Increase N dep', xlb, ylb, zlb)
+                 tracecol='red',
+                 '<b>Worse:</b> increase N dep, 1 kg ha<sup>-1</sup> y<sup>-1</sup>',
+                 # 'Increase N dep',
+                 xlb, ylb, zlb)
 # constant N-dep, 8 degrees warming
 tr <- make_trace(rep(2, n), seq(22,30,len=n))
 p1 <- plty_trace(tr$vx, tr$vy, tr$vz, showscale=F,
-                 tracecol='firebrick', 'Business as usual', xlb, ylb, zlb)
+                 tracecol='firebrick',
+                 '<b>Neutral:</b> business as usual',
+                 xlb, ylb, zlb)
 # declining N-dep, 8 degrees warming
 tr <- make_trace(seq(2, 1, len=n), seq(22,30,len=n))
 p2 <- plty_trace(tr$vx, tr$vy, tr$vz, showscale=F,
-                 tracecol='purple', 'Mitigate N dep', xlb, ylb, zlb)
+                 tracecol='purple',
+                 # 'Mitigate N dep',
+                 '<b>Better:</b> mitigate N dep, 1 kg ha<sup>-1</sup> y<sup>-1</sup>',
+                 xlb, ylb, zlb)
 # declining N-dep, 4 degrees warming
 tr <- make_trace(seq(2, 1, len=n), seq(22,26,len=n))
 p3 <- plty_trace(tr$vx, tr$vy, tr$vz, showscale=F,
-                 tracecol='cyan', 'Mitigate N+GHG emissions', xlb, ylb, zlb)
+                 tracecol='cyan', '<b>Best:</b> mitigate N+GHG emissions',
+                 xlb, ylb, zlb)
 # overplot them
 p <- subplot(p0, p1, p2, p3)
 # annotate the origin, and make the gradient steeper
@@ -192,13 +199,16 @@ a <- list(list(x=tr$vx[1], y=tr$vy[1], z=tr$vz[1],
                xanchor='left', yanchor='bottom'))
 p <- p %>%
         layout(scene = list(annotations = a,
-                            aspectratio = list(x=0.9, y=1, z=1)
-                            )
-               ) %>%
+                            aspectratio = list(x=0.9, y=1, z=1))) %>%
         config(displayModeBar = FALSE) %>%
-        toWebGL() %>%     # for faster rendering in browser
-        partial_bundle()  # for smaller filesize and faster load time
-
+        toWebGL() %>%         # for faster rendering in browser
+        partial_bundle() %>%  # for smaller filesize and faster load time
+        layout(legend = list(
+                title = list(text='<b> Mitigation scenario </b>'),
+                font = list(size = 12),
+                bgcolor = '#BFBFBF',
+                bordercolor = '#000000',
+                borderwidth = 1))
 
 # ### OPTION 1 --- render as interactive plotly object
 # p
