@@ -31,9 +31,9 @@ d$z[d$z < 0] <- NA
 d <- d[d$x < 7.1,]       # remove a slew of NA at high N dep
 `reshape_w` <- function (data, ...) {
         if (!is.data.frame(data))
-                stop("must be dataframe")
+                stop('must be dataframe')
         if (ncol(data) != 3)
-                stop("must have 3-column format")
+                stop('must have 3-column format')
         x <- data[, 1]
         y <- data[, 2]
         z <- data[, 3]
@@ -205,11 +205,14 @@ p <- p %>%
 
 
 # ### OPTION 2 --- save it locally as HTML
-htmlwidgets::saveWidget(as_widget(p), file = './index.html',
-                        title='Mitigation trajectories')
+# # htmlwidgets::saveWidget(as_widget(p), file = './index.html',
+# #                         title='Mitigation trajectories')
 # p$dependencies[[5]]
-
-
+htmlwidgets::saveWidget(as_widget(p),
+                        file = './index.html',
+                        selfcontained = FALSE,
+                        libdir = 'lib',
+                        title='Mitigation trajectories')
 
 # ### OPTION 3 --- host as shiny app
 # txt_desc <- paste0(
